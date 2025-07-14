@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktive 3D-Webseite</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Verhindert Scrollbalken */
+        }
+        canvas {
+            display: block; /* Entfernt zusätzlichen Platz unter dem Canvas */
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
+        import { GLTFLoader } from 'https://unpkg.com/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
+
+        // Szene, Kamera, Renderer initialisieren
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Licht hinzufügen (sehr wichtig für die Sichtbarkeit von 3D-Modellen)
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Sanftes weißes Umgebungslicht
+        scene.add(ambientLight);
+
+        // GLB-Modell laden
+        const loader = new GLTFLoader();
+        loader.load(
+            './-ressources/phone-x12-REMASTERED-glass.glb', // Korrigierter relativer Pfad
+            function (gltf) {
+                scene.add(gltf.scene);
+            },
+            undefined,
+            function (error) {
+                console.error(error);
+            }
+        );
+
+        camera.position.z = 5;
+
+        // Animations-Loop (optional, falls das Modell animiert werden soll)
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        // Fenstergröße anpassen
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>
